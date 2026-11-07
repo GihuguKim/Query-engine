@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gyanna.dev // Apex Relational RDBMS & SQL Visualizer</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================= TOP APPLICATION NAVBAR ================= -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-branding">
+        <span class="header-badge">&lt;G/&gt; RDBMS v3.0</span>
+        <h1 class="header-title">Apex Relational Database & SQL Query Engine</h1>
+      </div>
+      <div class="header-status">
+        <span class="status-indicator"></span>
+        <span class="status-text mono">IN-MEMORY ENGINE ACTIVE // 3NF PERSISTED</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN WORKBENCH ================= -->
+  <main class="dashboard-viewport">
+
+    <!-- TOP SECTION: INTERACTIVE ERD SCHEMA CANVAS -->
+    <section class="panel-card erd-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Relational Schema & Entity-Relationship Architecture</h2>
+          <p class="panel-sub">Visualizing Normalized 3NF Tables, Primary Keys (PK), and Foreign Key (FK) Junction Links.</p>
+        </div>
+        <div class="panel-actions">
+          <span class="badge badge-indigo mono">Many-to-Many Resolved (1:M • M:1)</span>
+          <button class="btn btn-secondary btn-sm" onclick="resetDatabaseToDefault()">Reset Sample Database</button>
+        </div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="erdCanvas" width="1140" height="260"></canvas>
+      </div>
+    </section>
+
+    <!-- MIDDLE SECTION: SQL CONSOLE & PRESET SHORTCUTS -->
+    <section class="panel-card console-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Interactive SQL Query Terminal</h2>
+          <p class="panel-sub">Write standard SQL statements (`SELECT`, `FROM`, `WHERE`, `LIKE`, `INNER JOIN`, `ORDER BY`).</p>
+        </div>
+        <div class="query-shortcuts">
+          <span class="mono text-muted text-xs">Run Preset:</span>
+          <button class="btn-chip" onclick="loadQueryPreset('all_students')">All Students</button>
+          <button class="btn-chip" onclick="loadQueryPreset('high_credits')">Credits &ge; 15</button>
+          <button class="btn-chip" onclick="loadQueryPreset('join_enrollments')">Relational INNER JOIN</button>
+          <button class="btn-chip" onclick="loadQueryPreset('like_filter')">LastName LIKE 'G%'</button>
+        </div>
+      </div>
+
+      <div class="terminal-wrapper">
+        <div class="terminal-bar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="terminal-label mono">query-editor.sql</span>
+        </div>
+        <div class="terminal-body">
+          <textarea id="sql-input" class="mono" rows="4" placeholder="SELECT * FROM tbl_Student WHERE YearGroup = 12;"></textarea>
+        </div>
+      </div>
+
+      <div class="console-actions">
+        <button class="btn btn-primary" onclick="executeUserQuery()">
+          <span>Execute Query (Ctrl + Enter)</span>
+          <span class="mono">&gt;_</span>
+        </button>
+        <span id="query-execution-time" class="mono text-muted text-xs">Execution: 0.00 ms</span>
+      </div>
+      <p id="query-error" class="error-banner mono"></p>
+    </section>
+
+    <!-- BOTTOM SECTION: LIVE QUERY RESULTS TABLE -->
+    <section class="panel-card results-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Query Execution Results Set</h2>
+          <p class="panel-sub" id="results-count-label">0 records returned</p>
+        </div>
+        <div class="results-meta">
+          <button class="btn btn-secondary btn-sm" onclick="exportResultsAsJSON()">Export Results JSON</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="query-table" id="query-results-table">
+          <thead id="results-thead">
+            <tr><th>Status</th><th>Information</th></tr>
+          </thead>
+          <tbody id="results-tbody">
+            <tr><td colspan="2" class="text-muted text-center py-4">Execute a query above to project records into this view.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ACCORDION: RAW IN-MEMORY TABLES VIEWER -->
+    <section class="panel-card raw-data-panel">
+      <div class="panel-header">
+        <h2>In-Memory Database Inspector (Raw Tables)</h2>
+        <span class="panel-tag mono">Unit 1 Topic 4 Inspection</span>
+      </div>
+
+      <div class="tabs-control">
+        <button class="tab-btn active" data-table="tbl_Student" onclick="switchTableTab('tbl_Student')">tbl_Student (4)</button>
+        <button class="tab-btn" data-table="tbl_Course" onclick="switchTableTab('tbl_Course')">tbl_Course (4)</button>
+        <button class="tab-btn" data-table="tbl_Enrollment" onclick="switchTableTab('tbl_Enrollment')">tbl_Enrollment (6)</button>
+      </div>
+
+      <div class="table-container mt-3">
+        <table class="query-table" id="raw-table-display">
+          <!-- Populated by script.js -->
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 Gyanna Kimana. Built from scratch with Semantic HTML5, CSS3 & JavaScript.</p>
+      <div class="footer-meta mono">
+        <span>Pearson Edexcel IAL IT Unit 1 (Databases) & Unit 2 (Interactive Systems)</span>
+        <span>•</span>
+        <span>Milestone 6: Relational Engine</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
